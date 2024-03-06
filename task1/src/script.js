@@ -2,9 +2,10 @@ const formResult = document.getElementById('form-result');
 const selectAllButton = document.getElementById('select-all-btn');
 const resetButton = document.getElementById('reset-form');
 
-const blurFields = ['street-name', 'suburb', 'postcode', 'dob'];
-const changeFields = ['building-type', 'features-heating', 'features-airconditioning', 'features-pool', 'features-sandpit'];
-const featuresCheckboxes = ['features-heating', 'features-airconditioning', 'features-pool', 'features-sandpit'].map(id => document.getElementById(id));
+// maps each related document element by id and places them in arrays
+const blurFields = ['street-name', 'suburb', 'postcode', 'dob'].map(id => document.getElementById(id));
+const changeFields = ['building-type', 'features-heating', 'features-airconditioning', 'features-pool', 'features-sandpit'].map(id => document.getElementById(id));
+const featureCheckboxes = ['features-heating', 'features-airconditioning', 'features-pool', 'features-sandpit'].map(id => document.getElementById(id));
 
 const renderFormResult = () => {
     let age = 0;
@@ -26,26 +27,29 @@ const renderFormResult = () => {
     formResult.value = result;
 };
 
-blurFields.forEach(id => {
-    document.getElementById(id).addEventListener('blur', renderFormResult);
+blurFields.forEach(field => {
+    field.addEventListener('blur', renderFormResult);
 });
 
-changeFields.forEach(id => {
-    document.getElementById(id).addEventListener('change', renderFormResult);
+changeFields.forEach(field => {
+    field.addEventListener('change', renderFormResult);
 });
 
 const updateSelectAllButton = () => {
-    const allChecked = featuresCheckboxes.every(checkbox => checkbox.checked);
-    selectAllButton.value = allChecked ? 'Deselect All' : 'Select All';
+    if (featureCheckboxes.every(checkbox => checkbox.checked)) {
+        selectAllButton.value = 'Deselect All';
+    } else {
+        selectAllButton.value = 'Select All';
+    }
 };
 
-featuresCheckboxes.forEach(checkbox => {
+featureCheckboxes.forEach(checkbox => {
     checkbox.addEventListener('click', updateSelectAllButton);
 });
 
 selectAllButton.addEventListener('click', () => {
-    const allChecked = featuresCheckboxes.every(checkbox => checkbox.checked);
-    featuresCheckboxes.forEach(checkbox => checkbox.checked = !allChecked);
+    const allChecked = featureCheckboxes.every(checkbox => checkbox.checked);
+    featureCheckboxes.forEach(checkbox => checkbox.checked = !allChecked);
     updateSelectAllButton();
     renderFormResult();
 });
