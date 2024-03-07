@@ -43,13 +43,36 @@ const validDate = (date) => {
     if (year === currentYear) {
         if (month > currentMonth) {
             return false;
-        } else if (month === currentMonth) {
-            if (day > currentDay) return false;
+        } else if (month === currentMonth && day > currentDay) {
+            return false;
         }
     }
 
     // if all conditions pass (are valid), returns true
     return true;
+};
+
+const calcAge = (dob) => {
+    // split the date of birth into its day/month/year integer parts
+    const dateSplit = dob.split("/");
+    const day = parseInt(dateSplit[0]);
+    const month = parseInt(dateSplit[1]);
+    const year = parseInt(dateSplit[2]);
+
+    // parse the dob as a date object
+    const dobDate = new Date(year, month, day);
+    const currentDate = new Date();
+
+    // initally set age to be the current year minus the dob year
+    let age = currentDate.getFullYear() - dobDate.getFullYear();
+    // check the difference between the months (+1 to account for the indexing of date.getMonth() starting from 0)
+    let monthDiff = currentDate.getMonth() + 1 - dobDate.getMonth();
+    // if it is negative, or equal with the dob day being higher than the current day, decrement age by 1
+    if (monthDiff < 0 || (monthDiff === 0 &&  dobDate.getDate() > currentDate.getDate())) {
+        age--;
+    }
+
+    return age;
 };
 
 const renderFormResult = () => {
@@ -75,9 +98,8 @@ const renderFormResult = () => {
         return;
     }
 
-    let age = 0;
     let text = 'You are ';
-    text += age + ' years old, ';
+    text += calcAge(dob) + ' years old, ';
     text += 'and your address is ' + document.getElementById('street-name').value + ', ';
     text += document.getElementById('suburb').value + ', ';
     text += document.getElementById('postcode').value + ', Australia. ';
